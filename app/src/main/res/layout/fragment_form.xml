@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#291E55"
+    android:orientation="vertical"
+    tools:context=".fragment.FormFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/votre_destination"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/entrez_votre_destination"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/dest_btn_help"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="left|bottom"
+            android:background="@drawable/help_logo"
+            android:elevation="4dp"
+            android:onClick="onHelpClick"
+            android:padding="8dp"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/id_destination"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corners"
+        android:hint="@string/u1_1_1"
+        android:minHeight="48dp"
+        android:textColor="@color/black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/votre_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/entrer_votre_position_ou_scanner"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/position_btn_help"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="left|bottom"
+            android:background="@drawable/help_logo"
+            android:elevation="4dp"
+            android:onClick="onHelpClick"
+            android:padding="8dp"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <EditText
+            android:id="@+id/id_position"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_corners"
+            android:hint="@string/u1_1_1"
+            android:inputType="text"
+            android:minHeight="48dp"
+            android:textColor="@color/black" />
+
+
+        <Button
+            android:id="@+id/btnscanner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#8A6ABF"
+            android:text="@string/scanner" />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/btndemarrer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="150dp"
+        android:backgroundTint="#8A6ABF"
+        android:text="@string/demarrer" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="60dp"
+        android:layout_gravity="center"
+        android:src="@drawable/route_icon_icons_com_64564"
+        />
+
+</LinearLayout>
