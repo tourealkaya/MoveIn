@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">MoveIn</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="commencer">Commencer</string>
+    <string name="demarrer">Demarrer</string>
+    <string name="movein">MoveIn</string>
+    <string name="id_de_votre_salle">ID de votre salle</string>
+    <string name="votre_destination">Votre destination:</string>
+    <string name="votre_position">Votre position:</string>
+    <string name="id_de_la_salle_ou_scanner">Id de la salle ou scanner  </string>
+    <string name="lecture_du_code_qr">Lecture du Qrcode</string>
+    <string name="ici_sera_affiche_le_chemin_a_votre_salle">Ici sera affiche le chemin à votre salle  </string>
+    <string name="u1_1_1">U1.1.1</string>
+    <string name="u1_1_1_">U1.1.1</string>
+    <string name="scanner">Scanner</string>
+    <string name="entrez_votre_destination">Entrez votre destination</string>
+    <string name="entrer_votre_position_ou_scanner">Entrer votre position ou scanner</string>
+</resources>

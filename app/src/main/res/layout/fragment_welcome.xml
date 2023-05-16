@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#291E55"
+    tools:context="project.movein.fragment.WelcomeFragment"
+    >
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="19dp"
+        android:src="@drawable/route_icon_icons_com_64564"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/movein"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/movein"
+        android:textSize="30sp"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/btncommencer"
+        android:layout_width="254dp"
+        android:layout_height="52dp"
+        android:elevation="4dp"
+        android:text="@string/commencer"
+        android:backgroundTint="#8A6ABF"
+        android:layout_gravity="center"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2" />
+
+    <ImageView
+        android:layout_width="172dp"
+        android:layout_height="60dp"
+        android:src="@drawable/logo_universite_rouen"
+        android:layout_gravity="center_horizontal|bottom"
+        />
+
+    <Button
+        android:id="@+id/btn_help"
+        android:layout_width="52dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:background="@drawable/help_logo"
+        android:elevation="4dp"
+        android:onClick="onHelpClick"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+</LinearLayout>
