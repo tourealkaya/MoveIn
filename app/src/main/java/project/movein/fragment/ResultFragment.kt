@@ -15,10 +15,12 @@ import project.movein.databinding.FragmentResultBinding
 import project.movein.backend.SendReceiveData
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
+import com.jsibbold.zoomage.ZoomageView
 
 class ResultFragment : Fragment() {
     private lateinit var binding: FragmentResultBinding
-    private lateinit var imageView: ImageView
+   // private lateinit var imageView: ImageView
+    private lateinit var imageView: ZoomageView
     private var scaleGestureDetector: ScaleGestureDetector? = null
     private var scaleFactor = 1.0f
     private var lastX = 0f
@@ -41,29 +43,29 @@ class ResultFragment : Fragment() {
         val sendReceiveData = SendReceiveData()
         var i = 0
         imageView = view.findViewById(R.id.plan)
-        scaleGestureDetector = context?.let { ScaleGestureDetector(it, ScaleListener()) }
+       // scaleGestureDetector = context?.let { ScaleGestureDetector(it, ScaleListener()) }
         var TAG = "ResultFragement"
 
-       /* imageView.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    lastX = event.x
-                    lastY = event.y
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val deltaX = event.x - lastX
-                    val deltaY = event.y - lastY
-                    imageView.translationX += deltaX
-                    imageView.translationY += deltaY
-                    lastX = event.x
-                    lastY = event.y
-                }
-                else -> return@setOnTouchListener false
-            }
-            scaleGestureDetector?.onTouchEvent(event)
-            true
-        }*/
-        imageView.setOnTouchListener { _, event ->
+        /* imageView.setOnTouchListener { _, event ->
+             when (event.action) {
+                 MotionEvent.ACTION_DOWN -> {
+                     lastX = event.x
+                     lastY = event.y
+                 }
+                 MotionEvent.ACTION_MOVE -> {
+                     val deltaX = event.x - lastX
+                     val deltaY = event.y - lastY
+                     imageView.translationX += deltaX
+                     imageView.translationY += deltaY
+                     lastX = event.x
+                     lastY = event.y
+                 }
+                 else -> return@setOnTouchListener false
+             }
+             scaleGestureDetector?.onTouchEvent(event)
+             true
+         }*/
+      /*  imageView.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     lastX = event.x
@@ -91,7 +93,7 @@ class ResultFragment : Fragment() {
             }
             scaleGestureDetector?.onTouchEvent(event)
             true
-        }
+        }*/
 
 
 
@@ -110,8 +112,16 @@ class ResultFragment : Fragment() {
                 i = 0
                 val nodeWithoutLastChar = nodes.dropLast(2)
                 var bitmap = imageView.drawable.toBitmap().copy(Bitmap.Config.ARGB_8888, true)
-
+                var lastXa = 0
+                var lastYa = 0
+                var canvas = Canvas(bitmap)
+                var paint = Paint().apply {
+                    color = Color.RED
+                    strokeWidth = 5f
+                    style = Paint.Style.FILL
+                }
                 for (node in nodeWithoutLastChar) {
+
                     i++
                     var coordinates = node.split(",")
                     val xd = coordinates[1].toInt()
@@ -122,20 +132,29 @@ class ResultFragment : Fragment() {
                     val ya = coordinates[2].toInt()
                     println("Coordonnées du nœud : ($xa, $ya)")
                     // Dessiner une ligne sur l'image
-                    val canvas = Canvas(bitmap)
+                    canvas = Canvas(bitmap)
                     val w = bitmap.width
                     val h = bitmap.height
-                    val paint = Paint().apply {
-                        color = Color.RED
-                        strokeWidth = 10f
-                        style = Paint.Style.STROKE
-                    }
+
 
                     // Définir les coordonnées de la ligne à dessiner
                     val startX = (xd * w / 833).toFloat()
                     val startY = (yd * h / 899).toFloat()
                     val endX = (xa * w / 833).toFloat()
                     val endY = (ya * h / 899).toFloat()
+
+                    // Dessiner le logo depart sur le Canvas
+                    if(i==1){
+                        val squareSize = 20
+                        val squareLeft = (startX - squareSize / 2).toInt()
+                        val squareTop = (startY - squareSize / 2).toInt()
+                        val squareRight = (startX + squareSize / 2).toInt()
+                        val squareBottom = (startY + squareSize / 2).toInt()
+                        val squareRect = Rect(squareLeft, squareTop, squareRight, squareBottom)
+                        canvas.drawRect(squareRect, paint)
+
+                    }
+
 
                     // Dessiner la ligne sur le Canvas
                     canvas.drawLine(startX, startY, endX, endY, paint)
@@ -154,18 +173,32 @@ class ResultFragment : Fragment() {
                     Log.d("TAG", "$message")
 
                     // Dessiner le logo dest sur le Canvas
-                    logoDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.destination)
-                    logoBitmap = logoDrawable?.toBitmap()
-                    logoWidth = 100
-                    logoHeight = 100
-                    logoLeft = (endX - logoWidth / 2).toInt()
-                    logoTop = (endY - logoHeight).toInt()
-                    logoRect = Rect(logoLeft, logoTop, logoLeft + logoWidth, logoTop + logoHeight)
+                    var logoDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.destination)
+                    var logoBitmap = logoDrawable?.toBitmap()
+                    var logoWidth = 100
+                    var logoHeight = 100
+                    var logoLeft = (endX - logoWidth / 2).toInt()
+                    var logoTop = (endY - logoHeight).toInt()
+                    var logoRect = Rect(logoLeft, logoTop, logoLeft + logoWidth, logoTop + logoHeight)
                     canvas.drawBitmap(logoBitmap!!, null, logoRect, paint)
 */
-
+                    coordinates = nodes[i].split(",")
+                    lastXa = coordinates[1].toInt()
+                    lastYa = coordinates[2].toInt()
                 }
-               // imageView.invalidate()
+                val logoDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.destination)
+                val logoBitmap = logoDrawable?.toBitmap()
+                val logoWidth = 100
+                val logoHeight = 100
+                val w = bitmap.width
+                val h = bitmap.height
+                val logoLeft = (lastXa * w / 833 - logoWidth / 2).toInt()
+                val logoTop = (lastYa * h / 899 - logoHeight).toInt()
+                val logoRect = Rect(logoLeft, logoTop, logoLeft + logoWidth, logoTop + logoHeight)
+                canvas.drawBitmap(logoBitmap!!, null, logoRect, paint)
+
+
+                // imageView.invalidate()
                 // Effectuer la modification de l'image sur le thread principal de manière sûre et asynchrone.
                 imageView.post { imageView.setImageBitmap(bitmap) }
                 //imageView.setImageDrawable(bitmap.toDrawable(resources))
@@ -181,9 +214,9 @@ class ResultFragment : Fragment() {
 
         )
     }
-    inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+  /*  inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         private val maxScaleFactor = 2.0f
-        private val minScaleFactor = 1.0f
+        private val minScaleFactor = 1f
 
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             scaleFactor *= detector.scaleFactor
@@ -194,7 +227,7 @@ class ResultFragment : Fragment() {
             imageView.scaleY = scaleFactor
             return true
         }
-    }
+    }*/
 
 
 }

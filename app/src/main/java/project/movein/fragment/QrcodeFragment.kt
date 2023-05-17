@@ -1,37 +1,39 @@
 package project.movein.fragment
-
 import android.annotation.SuppressLint
-import android.os.Build
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
-import android.util.Size
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.fragment.app.Fragment
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
-import com.google.common.util.concurrent.ListenableFuture
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.google.mlkit.vision.barcode.BarcodeScanner
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import project.movein.R
 import project.movein.databinding.FragmentQrcodeBinding
 import project.movein.viewmodel.QrcodeViewModel
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class QrcodeFragment : Fragment() {
     private lateinit var binding: FragmentQrcodeBinding
-    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
-    private lateinit var cameraExecutor: ExecutorService
-    private lateinit var analyzer: MyImageAnalyzer
+    private lateinit var cameraSelector: CameraSelector
+    private lateinit var processCameraProvider: ProcessCameraProvider
+    private lateinit var cameraPreview: Preview
+    private lateinit var imageAnalysis: ImageAnalysis
     private val qrcodeViewModel: QrcodeViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,86 +45,96 @@ class QrcodeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        hideStatusBars()
-
-        analyzer = MyImageAnalyzer(childFragmentManager, qrcodeViewModel)
-        cameraExecutor = Executors.newSingleThreadExecutor()
-        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-
-        cameraProviderFuture.addListener(
-            Runnable { bindPreview(cameraProviderFuture.get()) },
-            ContextCompat.getMainExecutor(requireContext())
-        )
-    }
-
-    private fun hideStatusBars() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            requireActivity().window.insetsController?.hide(WindowInsets.Type.statusBars())
-        } else {
-            @Suppress("DEPRECATION")
-            requireActivity().window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-        }
-    }
-
-    private fun bindPreview(cameraProvider: ProcessCameraProvider) {
-        val preview: Preview = Preview.Builder()
-            .build()
-        val cameraSelector: CameraSelector = CameraSelector.Builder()
+        cameraSelector= CameraSelector.Builder()
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
-        preview.setSurfaceProvider(binding.previewView.surfaceProvider)
+        qrcodeViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider ->
+            processCameraProvider = provider
+            bindCameraPreview()
+            bindInputAnalyser()
+        }
 
-        val imageAnalysis = ImageAnalysis.Builder()
-            .setTargetResolution(Size(1280, 720))
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
-        imageAnalysis.setAnalyzer(cameraExecutor, analyzer)
-        //val qalwa =  imageAnalysis.setAnalyzer(cameraExecutor, analyzer)
-        //Log.d("TTT", "Data sent to server:$qalwa")
-        cameraProvider.bindToLifecycle(
-            this as LifecycleOwner,
-            cameraSelector,
-            imageAnalysis,
-            preview
-        )
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
 
-    class MyImageAnalyzer(childFragmentManager: FragmentManager,private val qrcodeViewModel: QrcodeViewModel) : ImageAnalysis.Analyzer {
-        override fun analyze(imageProxy: ImageProxy) {
-            scanBarcode(imageProxy)
+    private fun bindCameraPreview() {
+        cameraPreview = Preview.Builder()
+            .setTargetRotation(binding.previewView.display.rotation)
+            .build()
+        cameraPreview.setSurfaceProvider(binding.previewView.surfaceProvider)
+        try {
+            processCameraProvider.bindToLifecycle(this, cameraSelector, cameraPreview)
+        } catch (illegalStateException: IllegalStateException) {
+            Log.e(TAG, illegalStateException.message ?: "IllegalStateException")
+        } catch (illegalArgumentException: IllegalArgumentException) {
+            Log.e(TAG, illegalArgumentException.message ?: "IllegalArgumentException")
+        }
+    }
+
+    private fun bindInputAnalyser() {
+        val barcodeScanner: BarcodeScanner = BarcodeScanning.getClient(
+            BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+                .build()
+        )
+        imageAnalysis = ImageAnalysis.Builder()
+            .setTargetRotation(binding.previewView.display.rotation)
+            .build()
+
+        val cameraExecutor = Executors.newSingleThreadExecutor()
+
+        imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
+            processImageProxy(barcodeScanner, imageProxy)
         }
 
-        @SuppressLint("UnsafeExperimentalUsageError", "UnsafeOptInUsageError")
-        private fun scanBarcode(imageProxy: ImageProxy) {
-            imageProxy.image?.let { image ->
-                val inputImage =
-                    InputImage.fromMediaImage(image, imageProxy.imageInfo.rotationDegrees)
-                val scanner = BarcodeScanning.getClient()
-                scanner.process(inputImage)
-                    .addOnCompleteListener {
-                        imageProxy.close()
-                        if (it.isSuccessful) {
-                            readBarcodeData(it.result as List<Barcode>)
-                        } else {
-                            it.exception?.printStackTrace()
+        try {
+            processCameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
+        } catch (illegalStateException: IllegalStateException) {
+            Log.e(TAG, illegalStateException.message ?: "IllegalStateException")
+        } catch (illegalArgumentException: IllegalArgumentException) {
+            Log.e(TAG, illegalArgumentException.message ?: "IllegalArgumentException")
+        }
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun processImageProxy(
+        barcodeScanner: BarcodeScanner,
+        imageProxy: ImageProxy) {
+        val inputImage =
+            InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
+
+        barcodeScanner.process(inputImage)
+            .addOnSuccessListener {
+                    barcodes ->
+                if (barcodes.isNotEmpty()) {
+                    when(barcodes.first().valueType){
+                        Barcode.TYPE_TEXT -> {
+                            val info: String = barcodes.first().rawValue.toString()
+                            lifecycleScope.launchWhenResumed {
+                                val action= QrcodeFragmentDirections
+                                    .actionQrcodeFragmentToFormFragment(info)
+                                findNavController().navigate(action)
+                            }
                         }
                     }
+                }
             }
-        }
-        var text= ""
-        private fun readBarcodeData(barcodes: List<Barcode>) {
+            .addOnFailureListener {
+                Log.e(TAG, it.message ?: it.toString())
 
-            for (barcode in barcodes) {
-                text = barcode.rawValue.toString()
-                qrcodeViewModel.setBarcodeText(text)
+            }.addOnCompleteListener {
+                imageProxy.close()
             }
-           // qrcodeViewModel.sendData(text)
-        }
-        //qrcodeViewModel.sendData(text)
     }
 }
+
+
+
+
 

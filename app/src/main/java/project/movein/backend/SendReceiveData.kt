@@ -15,7 +15,7 @@ class SendReceiveData {
 
     private val TAG = "BACKEND"
     private val serverAddress = "192.168.184.203"
-    private val serverPort = 9999
+    private val serverPort = 9998
 
 
     fun sendData(

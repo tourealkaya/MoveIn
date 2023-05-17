@@ -13,13 +13,13 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import project.movein.R
 import project.movein.databinding.FragmentFormBinding
 import project.movein.backend.SendReceiveData
 
 class FormFragment : Fragment() {
     private val TAG = "FormFragment"
-    var delim = ","
     private lateinit var binding: FragmentFormBinding
 
     override fun onCreateView(
@@ -36,8 +36,13 @@ class FormFragment : Fragment() {
 
 
         val sendReceiveData = SendReceiveData()
-     //   var qrval = ""
 
+        val args: FormFragmentArgs by navArgs()
+        val scannedValue = args.info
+
+        scannedValue.let {
+            binding.idPosition.setText(it)
+        }
 
 
         binding.idDestination.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
@@ -74,22 +79,13 @@ class FormFragment : Fragment() {
             if (position.isNotEmpty() && dest.isNotEmpty()) {
 
                 val message = ",$position,$dest"
-                val bundle = Bundle()
-                val formFragment = FormFragment()
 
 
-              /*  bundle.putString("message_key", message)
-
-// Créer une action de navigation qui inclut le Bundle
-               // val action = R.id.action_formFragment_to_resultFragment
-                formFragment.arguments = bundle
-
-// Naviguer vers le fragment de destination avec l'action
-                findNavController().navigate(R.id.action_formFragment_to_resultFragment)*/
                 // Créer une instance de l'action menant à la destination de destination
                 val action = FormFragmentDirections.actionFormFragmentToResultFragment(message)
 
-// Naviguer vers la destination de destination en utilisant l'instance de l'action
+            // Naviguer vers la destination de destination en utilisant l'instance de l'action
+                findNavController().navigate(action)
 
 
                /* sendReceiveData.sendData(message,
@@ -111,7 +107,6 @@ class FormFragment : Fragment() {
                         Log.e(TAG, "Error sending data: $error")
                     }
                 )*/
-                findNavController().navigate(action)
                // findNavController().navigate(R.id.action_formFragment_to_resultFragment)
             }
             else {
