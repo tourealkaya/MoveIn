@@ -53,20 +53,4 @@ class SendReceiveData {
         }.start()
     }
 
-   /* fun testNodes(test: String) {
-        val nodes = test.split("|")
-        var i = 0
-        val nodeWithoutLastChar = nodes.dropLast(2)
-        for (node in nodeWithoutLastChar) {
-            i++
-            var coordinates = node.split(",")
-            val xd = coordinates[1].toInt()
-            val yd = coordinates[2].toInt()
-            println("Coordonnées du nœud : ($xd, $yd)")
-            coordinates = nodes[i].split(",")
-            val xa = coordinates[1].toInt()
-            val ya = coordinates[2].toInt()
-            println("Coordonnées du nœud : ($xa, $ya)")
-        }
-    }*/
 }

@@ -38,7 +38,7 @@
 
     </LinearLayout>
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/id_destination"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
         android:orientation="horizontal"
         android:layout_marginTop="16dp">
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/id_position"
             android:layout_width="324dp"
             android:layout_height="wrap_content"

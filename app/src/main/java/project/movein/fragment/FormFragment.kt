@@ -6,29 +6,34 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-
 import com.google.zxing.integration.android.IntentIntegrator
 import project.movein.R
-import project.movein.databinding.FragmentFormBinding
 import project.movein.backend.SendReceiveData
-
+import project.movein.databinding.FragmentFormBinding
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class FormFragment : Fragment() {
     private val TAG = "FormFragment"
     private lateinit var binding: FragmentFormBinding
-
+    private var roomList: MutableList<String> = mutableListOf()
+    private var isValidPosition = false
+    private var isValidDestination = false
+    //val inputStream = requireContext().assets.open("rooms.txt")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,97 +46,109 @@ class FormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-        val sendReceiveData = SendReceiveData()
+        var inputStream = resources.openRawResource(R.raw.room)
+        val reader = BufferedReader(InputStreamReader(inputStream))
+        var line: String? = reader.readLine()
+        while (line != null) {
+            roomList.add(line)
+            line = reader.readLine()
+        }
+        reader.close()
 
         val args: FormFragmentArgs by navArgs()
-        val scannedValue = args.info
+        val positionValue = args.position
+        val destinationValue = args.destination
 
-        scannedValue.let {
+        positionValue.let {
             binding.idPosition.setText(it)
         }
-
-
-        binding.idDestination.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.idDestination.setBackgroundColor(Color.WHITE)
-            }
+        destinationValue.let {
+            binding.idDestination.setText(it)
         }
 
         binding.idPosition.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                binding.idPosition.setBackgroundColor(Color.WHITE)
+                binding.idPosition.setBackgroundResource(R.drawable.custom_edittext_border)
+                isValidPosition = false
             }
         }
 
+        binding.idDestination.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.idDestination.setBackgroundResource(R.drawable.custom_edittext_border)
+                isValidDestination = false
+            }
+        }
+
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, roomList)
+        binding.idPosition.setAdapter(adapter)
+        binding.idDestination.setAdapter(adapter)
+
+
         binding.btnscanner.setOnClickListener {
-            val intentIntegrator = IntentIntegrator.forSupportFragment(this)
+            /*val intentIntegrator = IntentIntegrator.forSupportFragment(this)
             intentIntegrator.setBeepEnabled(false)
             intentIntegrator.setCameraId(0)
             intentIntegrator.setPrompt("SCAN")
             intentIntegrator.setBarcodeImageEnabled(false)
-            intentIntegrator.initiateScan()
+            intentIntegrator.initiateScan()*/
+            val destination=binding.idDestination.text.toString()
+            val action= FormFragmentDirections.actionFormFragmentToQrcodeFragment(destination)
+            findNavController().navigate(action)
         }
-
-
-
 
         binding.btndemarrer.setOnClickListener {
             val position = binding.idPosition.text.toString()
             val dest = binding.idDestination.text.toString()
-            val colorStateList = ColorStateList.valueOf(Color.RED)
-            if (position.isNotEmpty() && dest.isNotEmpty()) {
 
-                val message = ",$position,$dest"
-
-
-                // Créer une instance de l'action menant à la destination de destination
-                val action = FormFragmentDirections.actionFormFragmentToResultFragment(message)
-
-            // Naviguer vers la destination de destination en utilisant l'instance de l'action
-                findNavController().navigate(action)
-
-
-               /* sendReceiveData.sendData(message,
-                    onSuccess = { response ->
-                        Log.d(TAG, "Data sent to server: $message")
-
-                        val nodes = response.split("|")
-
-                        // Parcourez chaque nœud et extrayez ses coordonnées x et y
-                        for (node in nodes) {
-                            val coordinates = node.split(",")
-                            val x = coordinates[1].toInt()
-                            val y = coordinates[2].toInt()
-                            println("Coordonnées du nœud : ($x, $y)")
-                        }
-                        Log.d(TAG, "Received response from server: $response")
-                    },
-                    onError = { error ->
-                        Log.e(TAG, "Error sending data: $error")
-                    }
-                )*/
-               // findNavController().navigate(R.id.action_formFragment_to_resultFragment)
+            // Check if position is valid
+            if (position.isNotEmpty() && roomList.contains(position)) {
+                isValidPosition = true
+            } else {
+                isValidPosition = false
+                binding.idPosition.setBackgroundResource(R.drawable.custom_edittext_border)
             }
-            else {
-                val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-                builder.setMessage("Veuillez remplir les champs manquants.")
-                    .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
-                    })
-                val dialog: AlertDialog = builder.create()
-                dialog.show()
 
-                if (position.isEmpty()) {
+            // Check if destination is valid
+            if (dest.isNotEmpty() && roomList.contains(dest)) {
+                isValidDestination = true
+            } else {
+                isValidDestination = false
+                binding.idDestination.setBackgroundResource(R.drawable.custom_edittext_border)
+            }
 
-                    binding.idPosition.setBackgroundResource(R.drawable.custom_edittext_border)
-                }
-                if (dest.isEmpty()) {
-                    binding.idDestination.setBackgroundResource(R.drawable.custom_edittext_border)
+            if (isValidPosition && isValidDestination) {
+                val message = (",$position,$dest")
+                val action = FormFragmentDirections.actionFormFragmentToResultFragment(message)
+                findNavController().navigate(action)
+            } else {
+                if (!isValidPosition && !isValidDestination) {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                    builder.setMessage("Les salles '$dest' et '$position' n'existent pas.")
+                        .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
+                        })
+                    val dialog: AlertDialog = builder.create()
+                    dialog.show()
+                } else if (!isValidPosition) {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                    builder.setMessage("La salle '$position' n'existe pas.")
+                        .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
+                        })
+                    val dialog: AlertDialog = builder.create()
+                    dialog.show()
+                } else if (!isValidDestination) {
+                    val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                    builder.setMessage("La salle '$dest' n'existe pas.")
+                        .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
+                        })
+                    val dialog: AlertDialog = builder.create()
+                    dialog.show()
                 }
             }
 
         }
+
 
         val desthelpButton: Button = view.findViewById(R.id.dest_btn_help)
         desthelpButton.setOnClickListener {
@@ -151,13 +168,15 @@ class FormFragment : Fragment() {
             if (result.contents == null) {
                 binding.idPosition.setText(result.contents)
             } else {
-                    binding.idPosition.setText(result.contents)
-
+                binding.idPosition.setText(result.contents)
+                isValidPosition = false
+                isValidDestination = false
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
+
 
     fun onHelpClick(view: View) {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
@@ -167,6 +186,5 @@ class FormFragment : Fragment() {
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
-
 
 }
