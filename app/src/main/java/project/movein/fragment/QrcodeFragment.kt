@@ -4,7 +4,6 @@ import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.activity.OnBackPressedCallback
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -14,8 +13,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -53,13 +52,6 @@ class QrcodeFragment : Fragment() {
             bindCameraPreview()
             bindInputAnalyser()
         }
-
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
 
@@ -115,10 +107,12 @@ class QrcodeFragment : Fragment() {
                         if (barcodes.isNotEmpty()) {
                             when(barcodes.first().valueType){
                                 Barcode.TYPE_TEXT -> {
-                                    val info: String = barcodes.first().rawValue.toString()
+                                    val args: QrcodeFragmentArgs by navArgs()
+                                    val positionValue = args.position
+                                    val destinationValue: String = barcodes.first().rawValue.toString()
                                     lifecycleScope.launchWhenResumed {
                                         val action= QrcodeFragmentDirections
-                                            .actionQrcodeFragmentToFormFragment(info)
+                                            .actionQrcodeFragmentToFormFragment(destinationValue,positionValue)
                                         findNavController().navigate(action)
                                     }
                                 }

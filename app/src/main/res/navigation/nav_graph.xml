@@ -26,13 +26,15 @@
         <action
             android:id="@+id/action_formFragment_to_resultFragment"
             app:destination="@id/resultFragment"/>
-        <action
-            android:id="@+id/action_qrcodeFragment_to_formFragment"
-            app:destination="@id/formFragment" />
         <argument
-            android:name="info"
+            android:name="position"
             app:argType="string"
             android:defaultValue=""/>
+        <argument
+            android:name="destination"
+            app:argType="string"
+            android:defaultValue=""/>
+
     </fragment>
     <fragment
         android:id="@+id/qrcodeFragment"
@@ -41,12 +43,21 @@
         tools:layout="@layout/fragment_qrcode" >
         <action
             android:id="@+id/action_qrcodeFragment_to_formFragment"
-            app:destination="@id/formFragment" />
+            app:destination="@id/formFragment"
+            app:popUpTo="@id/formFragment"
+            app:popUpToInclusive="true"/>
+        <argument
+            android:name="position"
+            app:argType="string"
+            android:defaultValue=""/>
+        <argument
+            android:name="destination"
+            app:argType="string"
+            android:defaultValue=""/>
     </fragment>
     <fragment
         android:id="@+id/resultFragment"
         android:name="project.movein.fragment.ResultFragment"
         android:label="fragment_result"
-        tools:layout="@layout/fragment_result">
-    </fragment>
+        tools:layout="@layout/fragment_result"/>
 </navigation>
