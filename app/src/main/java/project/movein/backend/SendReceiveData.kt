@@ -34,10 +34,9 @@ class SendReceiveData {
                 val bufferSize = 1024 // taille du buffer pour stocker la réponse
                 val buffer = ByteArray(bufferSize)
                 val inputStream = socket.getInputStream()
-                var bytesRead: Int
 
                 // Lire la réponse byte par byte dans un tableau de bytes
-                bytesRead = inputStream.read(buffer)
+                val bytesRead: Int = inputStream.read(buffer)
                 val response = String(buffer, 0, bytesRead)
 
                 // Traiter la réponse du serveur

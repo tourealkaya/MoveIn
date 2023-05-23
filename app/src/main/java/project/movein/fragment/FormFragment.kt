@@ -33,7 +33,6 @@ class FormFragment : Fragment() {
     private var roomList: MutableList<String> = mutableListOf()
     private var isValidPosition = false
     private var isValidDestination = false
-    //val inputStream = requireContext().assets.open("rooms.txt")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,22 +86,16 @@ class FormFragment : Fragment() {
 
 
         binding.btnscanner.setOnClickListener {
-            /*val intentIntegrator = IntentIntegrator.forSupportFragment(this)
-            intentIntegrator.setBeepEnabled(false)
-            intentIntegrator.setCameraId(0)
-            intentIntegrator.setPrompt("SCAN")
-            intentIntegrator.setBarcodeImageEnabled(false)
-            intentIntegrator.initiateScan()*/
             val destination=binding.idDestination.text.toString()
             val action= FormFragmentDirections.actionFormFragmentToQrcodeFragment(destination)
             findNavController().navigate(action)
         }
 
         binding.btndemarrer.setOnClickListener {
-            val position = binding.idPosition.text.toString()
-            val dest = binding.idDestination.text.toString()
-
-            // Check if position is valid
+            val position = binding.idPosition.text.toString().uppercase()
+            val dest = binding.idDestination.text.toString().uppercase()
+//            binding.idPosition.setText(position.uppercase())
+//            binding.idDestination.setText(dest.uppercase())
             if (position.isNotEmpty() && roomList.contains(position)) {
                 isValidPosition = true
             } else {
@@ -110,7 +103,6 @@ class FormFragment : Fragment() {
                 binding.idPosition.setBackgroundResource(R.drawable.custom_edittext_border)
             }
 
-            // Check if destination is valid
             if (dest.isNotEmpty() && roomList.contains(dest)) {
                 isValidDestination = true
             } else {

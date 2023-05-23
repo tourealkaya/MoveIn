@@ -5,14 +5,7 @@
     android:layout_height="match_parent"
     tools:context="project.movein.fragment.ResultFragment"
     android:orientation="vertical"
-    android:background="#9E9F83"
+    android:background="#c0b8a0"
     >
-
-    <com.jsibbold.zoomage.ZoomageView
-        android:id="@+id/plan"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/plann"
-        />
 
 </LinearLayout>
