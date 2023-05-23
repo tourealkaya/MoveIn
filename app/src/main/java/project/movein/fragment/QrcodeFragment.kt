@@ -50,88 +50,18 @@ class QrcodeFragment : Fragment() {
             .build()
         qrcodeViewModel.processCameraProvider.observe(viewLifecycleOwner) { provider ->
             processCameraProvider = provider
-            bindCameraPreview()
-            bindInputAnalyser()
+
         }
 
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
     }
 
 
-    private fun bindCameraPreview() {
-        cameraPreview = Preview.Builder()
-            .setTargetRotation(binding.previewView.display.rotation)
-            .build()
-        cameraPreview.setSurfaceProvider(binding.previewView.surfaceProvider)
-        try {
-            processCameraProvider.bindToLifecycle(this, cameraSelector, cameraPreview)
-        } catch (illegalStateException: IllegalStateException) {
-            Log.e(TAG, illegalStateException.message ?: "IllegalStateException")
-        } catch (illegalArgumentException: IllegalArgumentException) {
-            Log.e(TAG, illegalArgumentException.message ?: "IllegalArgumentException")
-        }
-    }
 
-    private fun bindInputAnalyser() {
-        val barcodeScanner: BarcodeScanner = BarcodeScanning.getClient(
-            BarcodeScannerOptions.Builder()
-                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
-                .build()
-        )
-        imageAnalysis = ImageAnalysis.Builder()
-            .setTargetRotation(binding.previewView.display.rotation)
-            .build()
 
-        val cameraExecutor = Executors.newSingleThreadExecutor()
 
-        imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
-            processImageProxy(barcodeScanner, imageProxy)
-        }
 
-        try {
-            processCameraProvider.bindToLifecycle(this, cameraSelector, imageAnalysis)
-        } catch (illegalStateException: IllegalStateException) {
-            Log.e(TAG, illegalStateException.message ?: "IllegalStateException")
-        } catch (illegalArgumentException: IllegalArgumentException) {
-            Log.e(TAG, illegalArgumentException.message ?: "IllegalArgumentException")
-        }
-    }
 
-    @SuppressLint("UnsafeOptInUsageError")
-    private fun processImageProxy(
-        barcodeScanner: BarcodeScanner,
-        imageProxy: ImageProxy) {
-        val inputImage =
-            InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
-
-        barcodeScanner.process(inputImage)
-            .addOnSuccessListener {
-                    barcodes ->
-                if (barcodes.isNotEmpty()) {
-                    when(barcodes.first().valueType){
-                        Barcode.TYPE_TEXT -> {
-                            val info: String = barcodes.first().rawValue.toString()
-                            lifecycleScope.launchWhenResumed {
-                                val action= QrcodeFragmentDirections
-                                    .actionQrcodeFragmentToFormFragment(info)
-                                findNavController().navigate(action)
-                            }
-                        }
-                    }
-                }
-            }
-            .addOnFailureListener {
-                Log.e(TAG, it.message ?: it.toString())
-
-            }.addOnCompleteListener {
-                imageProxy.close()
-            }
-    }
 }
 
 

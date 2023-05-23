@@ -21,7 +21,7 @@ private lateinit var binding: FragmentWelcomeBinding
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding= FragmentWelcomeBinding.inflate(layoutInflater)
+        binding= project.movein.databinding.FragmentWelcomeBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -30,10 +30,7 @@ private lateinit var binding: FragmentWelcomeBinding
         binding.btncommencer.setOnClickListener{
             findNavController().navigate(R.id.action_welcomeFragment_to_formFragment)
         }
-        val helpButton: Button = view.findViewById(R.id.btn_help)
-        helpButton.setOnClickListener {
-            onHelpClick(view)
-        }
+
     }
     fun onHelpClick(view: View) {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())

@@ -4,26 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#291E55"
+    android:background="#f4f4f4"
     tools:context="project.movein.fragment.WelcomeFragment"
     >
 
     <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_marginTop="19dp"
-        android:src="@drawable/route_icon_icons_com_64564"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/route_icon_icons_com_64564" />
 
     <TextView
         android:id="@+id/movein"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/movein"
-        android:textSize="30sp"
         android:layout_gravity="center"
-        android:textColor="@color/white"
-        />
+        android:fontFamily="sans-serif-black"
+        android:text="@string/app_name"
+        android:textColor="@color/black"
+        android:textSize="48sp" />
 
     <Space
         android:layout_width="match_parent"
@@ -36,7 +37,7 @@
         android:layout_height="52dp"
         android:elevation="4dp"
         android:text="@string/commencer"
-        android:backgroundTint="#8A6ABF"
+        android:backgroundTint="#45858f"
         android:layout_gravity="center"
         />
 
@@ -44,22 +45,5 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2" />
-
-    <ImageView
-        android:layout_width="172dp"
-        android:layout_height="60dp"
-        android:src="@drawable/logo_universite_rouen"
-        android:layout_gravity="center_horizontal|bottom"
-        />
-
-    <Button
-        android:id="@+id/btn_help"
-        android:layout_width="52dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|bottom"
-        android:background="@drawable/help_logo"
-        android:elevation="4dp"
-        android:onClick="onHelpClick"
-        tools:ignore="SpeakableTextPresentCheck" />
 
 </LinearLayout>

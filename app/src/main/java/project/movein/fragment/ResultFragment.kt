@@ -19,7 +19,6 @@ import com.jsibbold.zoomage.ZoomageView
 
 class ResultFragment : Fragment() {
     private lateinit var binding: FragmentResultBinding
-   // private lateinit var imageView: ImageView
     private lateinit var imageView: ZoomageView
     private var scaleGestureDetector: ScaleGestureDetector? = null
     private var scaleFactor = 1.0f
@@ -43,70 +42,15 @@ class ResultFragment : Fragment() {
         val sendReceiveData = SendReceiveData()
         var i = 0
         imageView = view.findViewById(R.id.plan)
-       // scaleGestureDetector = context?.let { ScaleGestureDetector(it, ScaleListener()) }
+        // scaleGestureDetector = context?.let { ScaleGestureDetector(it, ScaleListener()) }
         var TAG = "ResultFragement"
-
-        /* imageView.setOnTouchListener { _, event ->
-             when (event.action) {
-                 MotionEvent.ACTION_DOWN -> {
-                     lastX = event.x
-                     lastY = event.y
-                 }
-                 MotionEvent.ACTION_MOVE -> {
-                     val deltaX = event.x - lastX
-                     val deltaY = event.y - lastY
-                     imageView.translationX += deltaX
-                     imageView.translationY += deltaY
-                     lastX = event.x
-                     lastY = event.y
-                 }
-                 else -> return@setOnTouchListener false
-             }
-             scaleGestureDetector?.onTouchEvent(event)
-             true
-         }*/
-      /*  imageView.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    lastX = event.x
-                    lastY = event.y
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    val deltaX = event.x - lastX
-                    val deltaY = event.y - lastY
-
-                    // Obtain the current translation of the image
-                    val currentTranslationX = imageView.translationX
-                    val currentTranslationY = imageView.translationY
-
-                    // Calculate the updated translation coordinates
-                    val newTranslationX = currentTranslationX + deltaX
-                    val newTranslationY = currentTranslationY + deltaY
-
-                    imageView.translationX = newTranslationX
-                    imageView.translationY = newTranslationY
-
-                    lastX = event.x
-                    lastY = event.y
-                }
-                else -> {}
-            }
-            scaleGestureDetector?.onTouchEvent(event)
-            true
-        }*/
-
-
-
-
-
 
 
         sendReceiveData.sendData(message,
             onSuccess = { response ->
                 Log.d(TAG, "Data sent to server: $message")
-                val test ="M.1.35,146,68|1,160,296|2,806,311|U2.1.18,801,515|"
 
-                val nodes = test.split("|")
+                val nodes = response.split("|")
 
                 // Parcourez chaque nœud et extrayez ses coordonnées x et y
                 i = 0
@@ -117,7 +61,7 @@ class ResultFragment : Fragment() {
                 var canvas = Canvas(bitmap)
                 var paint = Paint().apply {
                     color = Color.RED
-                    strokeWidth = 5f
+                    strokeWidth = 10f
                     style = Paint.Style.FILL
                 }
                 for (node in nodeWithoutLastChar) {
@@ -145,7 +89,7 @@ class ResultFragment : Fragment() {
 
                     // Dessiner le logo depart sur le Canvas
                     if(i==1){
-                        val squareSize = 20
+                        val squareSize = 50
                         val squareLeft = (startX - squareSize / 2).toInt()
                         val squareTop = (startY - squareSize / 2).toInt()
                         val squareRight = (startX + squareSize / 2).toInt()
@@ -155,33 +99,8 @@ class ResultFragment : Fragment() {
 
                     }
 
-
                     // Dessiner la ligne sur le Canvas
                     canvas.drawLine(startX, startY, endX, endY, paint)
-
-                    // Dessiner le logo depart sur le Canvas
-                    /*
-                    var logoDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.depart)
-                    var logoBitmap = logoDrawable?.toBitmap()
-                    var logoWidth = 100
-                    var logoHeight = 100
-                    var logoLeft = (startX - logoWidth / 2).toInt()
-                    var logoTop = (startY - logoHeight).toInt()
-                    var logoRect = Rect(logoLeft, logoTop, logoLeft + logoWidth, logoTop + logoHeight)
-                    canvas.drawBitmap(logoBitmap!!, null, logoRect, paint)
-
-                    Log.d("TAG", "$message")
-
-                    // Dessiner le logo dest sur le Canvas
-                    var logoDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.destination)
-                    var logoBitmap = logoDrawable?.toBitmap()
-                    var logoWidth = 100
-                    var logoHeight = 100
-                    var logoLeft = (endX - logoWidth / 2).toInt()
-                    var logoTop = (endY - logoHeight).toInt()
-                    var logoRect = Rect(logoLeft, logoTop, logoLeft + logoWidth, logoTop + logoHeight)
-                    canvas.drawBitmap(logoBitmap!!, null, logoRect, paint)
-*/
                     coordinates = nodes[i].split(",")
                     lastXa = coordinates[1].toInt()
                     lastYa = coordinates[2].toInt()
@@ -201,33 +120,16 @@ class ResultFragment : Fragment() {
                 // imageView.invalidate()
                 // Effectuer la modification de l'image sur le thread principal de manière sûre et asynchrone.
                 imageView.post { imageView.setImageBitmap(bitmap) }
-                //imageView.setImageDrawable(bitmap.toDrawable(resources))
-                //imageView.setImageBitmap(bitmap)
-                Log.d(TAG, "Received response from server: $response")
+                //  Log.d(TAG, "Received response from server: $response")
 
             },
             onError = { error ->
                 Log.e(TAG, "Error sending data: $error")
             }
 
-
-
         )
     }
-  /*  inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        private val maxScaleFactor = 2.0f
-        private val minScaleFactor = 1f
 
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            scaleFactor *= detector.scaleFactor
-
-            scaleFactor = scaleFactor.coerceIn(minScaleFactor, maxScaleFactor)
-
-            imageView.scaleX = scaleFactor
-            imageView.scaleY = scaleFactor
-            return true
-        }
-    }*/
 
 
 }
