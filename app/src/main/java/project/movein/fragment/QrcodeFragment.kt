@@ -4,14 +4,17 @@ import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.fragment.app.Fragment
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.mlkit.vision.barcode.BarcodeScanner
@@ -19,6 +22,7 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import project.movein.R
 import project.movein.databinding.FragmentQrcodeBinding
 import project.movein.viewmodel.QrcodeViewModel
 import java.util.concurrent.Executors
@@ -49,10 +53,10 @@ class QrcodeFragment : Fragment() {
             processCameraProvider = provider
             bindCameraPreview()
             bindInputAnalyser()
+
         }
+
     }
-
-
     private fun bindCameraPreview() {
         cameraPreview = Preview.Builder()
             .setTargetRotation(binding.previewView.display.rotation)
@@ -91,7 +95,6 @@ class QrcodeFragment : Fragment() {
             Log.e(TAG, illegalArgumentException.message ?: "IllegalArgumentException")
         }
     }
-
     @SuppressLint("UnsafeOptInUsageError")
     private fun processImageProxy(
         barcodeScanner: BarcodeScanner,
@@ -100,17 +103,18 @@ class QrcodeFragment : Fragment() {
             InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
 
         barcodeScanner.process(inputImage)
-            .addOnSuccessListener {
-                    barcodes ->
+            .addOnSuccessListener { barcodes ->
                 if (barcodes.isNotEmpty()) {
-                    when(barcodes.first().valueType){
+                    when (barcodes.first().valueType) {
                         Barcode.TYPE_TEXT -> {
                             val args: QrcodeFragmentArgs by navArgs()
                             val positionValue = args.position
                             val destinationValue: String = barcodes.first().rawValue.toString()
                             lifecycleScope.launchWhenResumed {
-                                val action= QrcodeFragmentDirections
-                                    .actionQrcodeFragmentToFormFragment(destinationValue,positionValue)
+                                val action = QrcodeFragmentDirections
+                                    .actionQrcodeFragmentToFormFragment(
+                                        destinationValue, positionValue
+                                    )
                                 findNavController().navigate(action)
                             }
                         }

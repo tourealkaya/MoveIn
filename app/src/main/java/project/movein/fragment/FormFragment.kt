@@ -6,26 +6,27 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+
 import com.google.zxing.integration.android.IntentIntegrator
 import project.movein.R
-import project.movein.backend.SendReceiveData
 import project.movein.databinding.FragmentFormBinding
+import project.movein.backend.SendReceiveData
 import java.io.BufferedReader
 import java.io.InputStreamReader
+
 
 class FormFragment : Fragment() {
     private val TAG = "FormFragment"
@@ -33,6 +34,8 @@ class FormFragment : Fragment() {
     private var roomList: MutableList<String> = mutableListOf()
     private var isValidPosition = false
     private var isValidDestination = false
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,6 +48,10 @@ class FormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        val sendReceiveData = SendReceiveData()
+
         var inputStream = resources.openRawResource(R.raw.room)
         val reader = BufferedReader(InputStreamReader(inputStream))
         var line: String? = reader.readLine()
@@ -54,15 +61,41 @@ class FormFragment : Fragment() {
         }
         reader.close()
 
-        val args: FormFragmentArgs by navArgs()
+        val args : FormFragmentArgs by navArgs()
+        var mError = args.mError
         val positionValue = args.position
         val destinationValue = args.destination
 
+
+        // Vérifiez si mError n'est pas null
+        if (!mError.isEmpty()) {
+            // Affichez une boîte de dialogue avec le message d'erreur
+            val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+            builder.setMessage("$mError")
+                .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
+                })
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+            mError =""
+        }
+
+        /* val scannedValue = args.info
+             scannedValue.let {
+             binding.idPosition.setText(it)
+         }*/
         positionValue.let {
             binding.idPosition.setText(it)
         }
         destinationValue.let {
             binding.idDestination.setText(it)
+        }
+
+
+        binding.idDestination.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.idDestination.setBackgroundResource(R.drawable.custom_edittext_border)
+                isValidDestination = false
+            }
         }
 
         binding.idPosition.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
@@ -72,18 +105,9 @@ class FormFragment : Fragment() {
             }
         }
 
-        binding.idDestination.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.idDestination.setBackgroundResource(R.drawable.custom_edittext_border)
-                isValidDestination = false
-            }
-        }
-
-
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, roomList)
         binding.idPosition.setAdapter(adapter)
         binding.idDestination.setAdapter(adapter)
-
 
         binding.btnscanner.setOnClickListener {
             val destination=binding.idDestination.text.toString()
@@ -91,18 +115,21 @@ class FormFragment : Fragment() {
             findNavController().navigate(action)
         }
 
+
+
+
         binding.btndemarrer.setOnClickListener {
-            val position = binding.idPosition.text.toString().uppercase()
-            val dest = binding.idDestination.text.toString().uppercase()
-//            binding.idPosition.setText(position.uppercase())
-//            binding.idDestination.setText(dest.uppercase())
+            val position = binding.idPosition.text.toString()
+            val dest = binding.idDestination.text.toString()
+            val colorStateList = ColorStateList.valueOf(Color.RED)
             if (position.isNotEmpty() && roomList.contains(position)) {
                 isValidPosition = true
-            } else {
+
+                //val message = ",$position,$dest"
+            }else {
                 isValidPosition = false
                 binding.idPosition.setBackgroundResource(R.drawable.custom_edittext_border)
             }
-
             if (dest.isNotEmpty() && roomList.contains(dest)) {
                 isValidDestination = true
             } else {
@@ -142,6 +169,7 @@ class FormFragment : Fragment() {
         }
 
 
+
         val desthelpButton: Button = view.findViewById(R.id.dest_btn_help)
         desthelpButton.setOnClickListener {
             onHelpClick(view)
@@ -161,14 +189,14 @@ class FormFragment : Fragment() {
                 binding.idPosition.setText(result.contents)
             } else {
                 binding.idPosition.setText(result.contents)
-                isValidPosition = false
-                isValidDestination = false
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
+            isValidPosition = false
+            isValidDestination = false
         }
     }
-
 
     fun onHelpClick(view: View) {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
@@ -178,5 +206,7 @@ class FormFragment : Fragment() {
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
+
+
 
 }
