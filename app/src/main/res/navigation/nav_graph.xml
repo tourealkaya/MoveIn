@@ -14,7 +14,6 @@
             android:id="@+id/action_welcomeFragment_to_formFragment"
             app:destination="@id/formFragment" />
     </fragment>
-
     <fragment
         android:id="@+id/formFragment"
         android:name="project.movein.fragment.FormFragment"
@@ -22,25 +21,27 @@
         tools:layout="@layout/fragment_form" >
         <action
             android:id="@+id/action_formFragment_to_qrcodeFragment"
-            app:destination="@id/qrcodeFragment"/>
+            app:destination="@id/qrcodeFragment" />
         <action
             android:id="@+id/action_formFragment_to_resultFragment"
-            app:destination="@id/resultFragment"/>
+            app:destination="@id/resultFragment"
+            />
         <argument
             android:name="position"
             app:argType="string"
-            android:defaultValue=""/>
+            android:defaultValue=""
+            />
         <argument
             android:name="destination"
             app:argType="string"
-            android:defaultValue=""/>
-
+            android:defaultValue=""
+            />
     </fragment>
     <fragment
         android:id="@+id/qrcodeFragment"
         android:name="project.movein.fragment.QrcodeFragment"
         android:label="fragment_qrcode"
-        tools:layout="@layout/fragment_qrcode" >
+        tools:layout="@layout/fragment_qrcode">
         <action
             android:id="@+id/action_qrcodeFragment_to_formFragment"
             app:destination="@id/formFragment"
@@ -55,9 +56,14 @@
             app:argType="string"
             android:defaultValue=""/>
     </fragment>
+
     <fragment
         android:id="@+id/resultFragment"
         android:name="project.movein.fragment.ResultFragment"
         android:label="fragment_result"
-        tools:layout="@layout/fragment_result"/>
+        tools:layout="@layout/fragment_result">
+        <argument
+            android:name="message"
+            app:argType="string" />
+    </fragment>
 </navigation>

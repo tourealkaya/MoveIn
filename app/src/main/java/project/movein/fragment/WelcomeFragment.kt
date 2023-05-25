@@ -31,18 +31,5 @@ private lateinit var binding: FragmentWelcomeBinding
             findNavController().navigate(R.id.action_welcomeFragment_to_formFragment)
         }
 
-        binding.btnHelp?.setOnClickListener {
-            onHelpClick(view)
-        }
     }
-    fun onHelpClick(view: View) {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-        builder.setMessage("Aide")
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->})
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-    }
-
-
-
 }
