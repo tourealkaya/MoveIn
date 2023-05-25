@@ -10,7 +10,6 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.fragment.app.Fragment
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -20,7 +19,6 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import project.movein.R
 import project.movein.databinding.FragmentQrcodeBinding
 import project.movein.viewmodel.QrcodeViewModel
 import java.util.concurrent.Executors
@@ -53,7 +51,6 @@ class QrcodeFragment : Fragment() {
             bindInputAnalyser()
         }
     }
-
 
     private fun bindCameraPreview() {
         cameraPreview = Preview.Builder()
