@@ -68,7 +68,7 @@ class FormFragment : Fragment() {
 
 
         // Vérifiez si mError n'est pas null
-        if (!mError.isEmpty()) {
+       /* if (!mError.isEmpty()) {
             // Affichez une boîte de dialogue avec le message d'erreur
             val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
             builder.setMessage("$mError")
@@ -77,7 +77,7 @@ class FormFragment : Fragment() {
             val dialog: AlertDialog = builder.create()
             dialog.show()
             mError =""
-        }
+        }*/
 
         /* val scannedValue = args.info
              scannedValue.let {
@@ -181,22 +181,22 @@ class FormFragment : Fragment() {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null) {
-            // If QRCode has no data.
-            if (result.contents == null) {
-                binding.idPosition.setText(result.contents)
-            } else {
-                binding.idPosition.setText(result.contents)
-
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-            isValidPosition = false
-            isValidDestination = false
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+//        if (result != null) {
+//            // If QRCode has no data.
+//            if (result.contents == null) {
+//                binding.idPosition.setText(result.contents)
+//            } else {
+//                binding.idPosition.setText(result.contents)
+//
+//            }
+//        } else {
+//            super.onActivityResult(requestCode, resultCode, data)
+//            isValidPosition = false
+//            isValidDestination = false
+//        }
+//    }
 
     fun onHelpClick(view: View) {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())

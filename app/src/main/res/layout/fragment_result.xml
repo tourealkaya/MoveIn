@@ -6,22 +6,27 @@
     tools:context="project.movein.fragment.ResultFragment"
     android:orientation="vertical"
     android:background="#9E9F83"
-    >
-    <!--
+    android:gravity="center">
+
+
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="0dp"
+        android:layout_weight="1">
         <ProgressBar
             android:id="@+id/loadingProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:tint="@android:color/white"
-            android:visibility="visible" />
+            android:visibility="visible"
+            android:layout_gravity="center" />
 
-    </FrameLayout>-->
+        <com.jsibbold.zoomage.ZoomageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-
+    </FrameLayout>
 
 </LinearLayout>

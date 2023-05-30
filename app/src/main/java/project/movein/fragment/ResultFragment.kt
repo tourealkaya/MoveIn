@@ -1,5 +1,7 @@
 package project.movein.fragment
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.graphics.*
 import android.os.Bundle
 import android.util.Log
@@ -64,21 +66,31 @@ class ResultFragment : Fragment() {
         binding.root.addView(imageView)
 
         var TAG = "ResultFragement"
-       // loadingProgressBar = view.findViewById(R.id.loadingProgressBar)
-        //imageView.visibility = View.GONE
-        //loadingProgressBar.visibility = View.VISIBLE
-
-
-
-
+        loadingProgressBar = binding.loadingProgressBar
+        loadingProgressBar.visibility = View.GONE
+        loadingProgressBar.visibility = View.VISIBLE
+        imageView.visibility = View.GONE
 
         sendReceiveData.sendData(message,
             onSuccess = { response ->
                 Log.d(TAG, "Data sent to server: $message")
-                val responser = "Michem404"
-                if(responser == "Michem404"){
-                    val action = ResultFragmentDirections.actionResultFragmentToFormFragment(mError = "ERREUR SERVEUR")
-                    findNavController().navigate(action)
+               //val responser = "Michem404"
+               if(response == "Michem404"){
+
+                  // runOnUiThread pour exécuter le code qui crée et affiche le pop-up sur le thread principal
+
+                   requireActivity().runOnUiThread {
+                       val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                       builder.setMessage("Erreur Serveur")
+                           .setPositiveButton("OK") { dialog, _ ->
+                               dialog.dismiss()
+                               val action = ResultFragmentDirections.actionResultFragmentToFormFragment()
+                               findNavController().navigate(action)
+                           }
+                       val dialog: AlertDialog = builder.create()
+                       dialog.show()
+
+                   }
 
                 }
                 else {
@@ -154,9 +166,9 @@ class ResultFragment : Fragment() {
                     // imageView.invalidate()
                     // Effectuer la modification de l'image sur le thread principal de manière sûre et asynchrone.
                 imageView.post {
-                   // loadingProgressBar.visibility = View.GONE
+                    loadingProgressBar.visibility = View.GONE
                     imageView.setImageBitmap(bitmap)
-                        //imageView.visibility = View.VISIBLE
+                    imageView.visibility = View.VISIBLE
                     }
 
                 }
