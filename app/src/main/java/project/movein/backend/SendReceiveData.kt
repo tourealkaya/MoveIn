@@ -14,7 +14,7 @@ import java.net.Socket
 class SendReceiveData {
 
     private val TAG = "BACKEND"
-    private val serverAddress = "192.168.189.203"
+    private val serverAddress = "10.192.27.243"
     private val serverPort = 9997
 
 
