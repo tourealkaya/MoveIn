@@ -94,6 +94,8 @@ class ResultFragment : Fragment() {
         sendReceiveData.sendData(message,
 
             onSuccess = { response ->
+                //loadingProgressBar.visibility = View.VISIBLE
+
                 Log.d(TAG, "Data sent to server: $message")
                // val responsetest = "Michem404"
                 if (response == "Michem404") {
