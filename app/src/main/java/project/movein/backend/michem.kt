@@ -7,38 +7,51 @@ import androidx.annotation.RequiresApi
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import java.io.InputStream
+import java.io.InputStreamReader
 
 class michem {
 
 
-
-
-    fun getData(path: String): Map<String, Any> {
-        val salles = mutableMapOf<String, Map<String, String>>()
-        val noeuds = mutableMapOf<String, Map<String, String>>()
+    fun getData(inputStream: InputStream): Map<String, Any> {
+        val salles = mutableMapOf<String, List<String>>()
+        val noeuds = mutableMapOf<String, List<String>>()
         val chemins = mutableListOf<List<String>>()
 
-        val file = File(path)
-        file.bufferedReader().useLines { lines ->
-            var section = 0
-            for (line in lines) {
-                val trimmedLine = line.trim()
-                if (trimmedLine == "------------------") {
-                    section++
-                    continue
-                }
+        val reader = BufferedReader(InputStreamReader(inputStream))
 
-                val data = trimmedLine.split(",")
-                when (section) {
-                    0 -> salles[data[0]] = mapOf("attr1" to data[1], "attr2" to data[2])
-                    1 -> noeuds[data[0]] = mapOf("attr1" to data[1], "attr2" to data[2])
-                    2 -> chemins.add(listOf(data[0], data[1], data[2]))
-                }
+        while (true) {
+            val line = reader.readLine()?.trim() ?: break
+            if (line == "------------------") {
+                break
             }
+            val data = line.split(",")
+            salles[data[0]] = listOf(data[1], data[2])
         }
+
+        while (true) {
+            val line = reader.readLine()?.trim() ?: break
+            if (line == "------------------") {
+                break
+            }
+            val data = line.split(",")
+            noeuds[data[0]] = listOf(data[1], data[2])
+        }
+
+        while (true) {
+            val line = reader.readLine()?.trim() ?: break
+            if (line == "------------------") {
+                break
+            }
+            val data = line.split(",")
+            chemins.add(listOf(data[0], data[1], data[2]))
+        }
+
+        reader.close()
 
         return mapOf("salles" to salles, "noeuds" to noeuds, "chemins" to chemins)
     }
+
 
 
     fun dijkstra(graph: Map<String, Map<String, Int>>, start: String, end: String): List<String>? {

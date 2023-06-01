@@ -84,7 +84,9 @@ class ResultFragment : Fragment() {
         }
 
         val Michem = michem()
-        println(Michem.getData(""))
+        val data = Michem.getData(resources.openRawResource(R.raw.plan))
+        val graph = Michem.getGraph(data["chemins"] as List<List<String>>)
+        println(Michem.dijkstra(graph,"M.1.19","U2.1.38"))
 
         imgLoadPrecButton.setOnClickListener {
 //            loadingProgressBar.visibility = View.VISIBLE
