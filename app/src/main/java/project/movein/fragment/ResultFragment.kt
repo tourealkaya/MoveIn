@@ -6,6 +6,7 @@ import android.graphics.*
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -52,9 +53,9 @@ class ResultFragment : Fragment() {
 
         imageView = ZoomageView(requireContext())
 
-        val layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
+        val layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
         )
         imageList = listOf(
             R.drawable.plann,
@@ -62,7 +63,7 @@ class ResultFragment : Fragment() {
             R.drawable.thirdplan)
 
         imageView.layoutParams = layoutParams
-        binding.root.addView(imageView)
+        binding.frame.addView(imageView)
 
         var TAG = "ResultFragement"
         loadingProgressBar = binding.loadingProgressBar
@@ -74,6 +75,7 @@ class ResultFragment : Fragment() {
 
         imgLoadButton.setOnClickListener {
             if (currentIndex < imageList.size - 1) {
+                loadingProgressBar.visibility = View.VISIBLE
                 currentIndex++
                 updateButtonVisibility()
                 loadImage()
@@ -81,6 +83,7 @@ class ResultFragment : Fragment() {
         }
 
         imgLoadPrecButton.setOnClickListener {
+//            loadingProgressBar.visibility = View.VISIBLE
             if (currentIndex > 0) {
                 currentIndex--
                 updateButtonVisibility()

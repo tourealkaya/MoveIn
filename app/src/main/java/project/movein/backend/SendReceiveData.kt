@@ -1,20 +1,16 @@
 package project.movein.backend
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import java.io.BufferedReader
-import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
-import java.io.InputStreamReader
 import java.net.Socket
 
 class SendReceiveData {
 
     private val TAG = "BACKEND"
-    private val serverAddress = "10.192.27.243"
+    private val serverAddress = "192.168.107.203"
     private val serverPort = 9997
 
 
