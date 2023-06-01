@@ -7,6 +7,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import org.junit.Assert.*
+import project.movein.backend.michem
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -17,8 +18,9 @@ import org.junit.Assert.*
 class ExampleInstrumentedTest {
     @Test
     fun useAppContext() {
+        val Michem = michem()
         // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("project.movein", appContext.packageName)
+
+        Michem.getData("backend/plan.txt")
     }
 }

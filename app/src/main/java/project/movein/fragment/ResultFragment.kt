@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
 import com.jsibbold.zoomage.ZoomageView
+import project.movein.backend.michem
 import project.movein.fragment.ResultFragmentDirections
 
 class ResultFragment : Fragment() {
@@ -81,6 +82,9 @@ class ResultFragment : Fragment() {
                 loadImage()
             }
         }
+
+        val Michem = michem()
+        println(Michem.getData(""))
 
         imgLoadPrecButton.setOnClickListener {
 //            loadingProgressBar.visibility = View.VISIBLE
