@@ -1,18 +1,25 @@
 package project.movein.fragment
 import android.content.DialogInterface
 import android.os.Bundle
+
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import project.movein.R
 import project.movein.databinding.FragmentFormBinding
+import project.movein.backend.SendReceiveData
 import java.io.BufferedReader
 import java.io.InputStreamReader
+
 class FormFragment : Fragment() {
     private val TAG = "FormFragment"
     private lateinit var binding: FragmentFormBinding
@@ -29,6 +36,10 @@ class FormFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        val sendReceiveData = SendReceiveData()
+
         var inputStream = resources.openRawResource(R.raw.room)
         val reader = BufferedReader(InputStreamReader(inputStream))
         var line: String? = reader.readLine()
@@ -38,6 +49,7 @@ class FormFragment : Fragment() {
         }
         reader.close()
         val args : FormFragmentArgs by navArgs()
+        var mError = args.mError
         val positionValue = args.position
         val destinationValue = args.destination
         positionValue.let {
@@ -46,18 +58,55 @@ class FormFragment : Fragment() {
         destinationValue.let {
             binding.idDestination.setText(it)
         }
-        binding.idDestination.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.idDestination.setBackgroundResource(R.drawable.custom_edittext_border)
-                isValidDestination = false
+
+        var position = positionValue
+        var dest = destinationValue
+
+
+        binding.idDestination.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int,
+                                           count: Int, after: Int) {
             }
-        }
-        binding.idPosition.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                binding.idPosition.setBackgroundResource(R.drawable.custom_edittext_border)
-                isValidPosition = false
+
+            override fun onTextChanged(
+                s: CharSequence, start: Int,
+                before: Int, count: Int
+            ) {
+                if (roomList.contains(binding.idDestination.text.toString())) {
+                    binding.idDestination.setBackgroundResource(R.drawable.custom_edittext_green_border)
+                }
+                else{
+                    binding.idDestination.setBackgroundResource(R.drawable.custom_edittext_border)
+                    isValidDestination = false
+                }
             }
-        }
+        })
+
+        binding.idPosition.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int,
+                                           count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(
+                s: CharSequence, start: Int,
+                before: Int, count: Int
+            ) {
+                if (roomList.contains(binding.idPosition.text.toString())) {
+                    binding.idPosition.setBackgroundResource(R.drawable.custom_edittext_green_border)
+                }
+                else{
+                    binding.idPosition.setBackgroundResource(R.drawable.custom_edittext_border)
+                    isValidPosition = false
+                }
+            }
+        })
+
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, roomList)
         binding.idPosition.setAdapter(adapter)
         binding.idDestination.setAdapter(adapter)
@@ -67,11 +116,15 @@ class FormFragment : Fragment() {
             val action= FormFragmentDirections.actionFormFragmentToQrcodeFragment(destination)
             findNavController().navigate(action)
         }
+
         binding.btndemarrer.setOnClickListener {
-            val position = binding.idPosition.text.toString()
-            val dest = binding.idDestination.text.toString()
+             position = binding.idPosition.text.toString()
+             dest = binding.idDestination.text.toString()
+            val colorStateList = ColorStateList.valueOf(Color.RED)
             if (position.isNotEmpty() && roomList.contains(position)) {
                 isValidPosition = true
+
+                //val message = ",$position,$dest"
             }else {
                 isValidPosition = false
                 binding.idPosition.setBackgroundResource(R.drawable.custom_edittext_border)
@@ -118,7 +171,8 @@ class FormFragment : Fragment() {
             onHelpClick()
         }
     }
-    fun onHelpClick() {
+
+    fun onHelpClick(view: View) {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         builder.setMessage("Aide")
             .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
