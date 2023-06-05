@@ -1,19 +1,15 @@
 package project.movein.fragment
 
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.graphics.*
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.drawable.toDrawable
 import project.movein.R
 import project.movein.databinding.FragmentResultBinding
 import project.movein.backend.SendReceiveData
@@ -51,26 +47,22 @@ class ResultFragment : Fragment() {
         message = arguments?.getString("message").toString()
         val sendReceiveData = SendReceiveData()
         var i = 0
-
         imageView = ZoomageView(requireContext())
-
-        val layoutParams = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT
+        val layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT
         )
+      
         imageList = listOf(
             R.drawable.plann,
             R.drawable.secondplan,
             R.drawable.thirdplan)
-
         imageView.layoutParams = layoutParams
         binding.frame.addView(imageView)
-
         var TAG = "ResultFragement"
         loadingProgressBar = binding.loadingProgressBar
         loadingProgressBar.visibility = View.GONE
         imageView.visibility = View.GONE
-
         val imgLoadButton = binding.imgLoadButton
         val imgLoadPrecButton = binding.imgLoadPrecButton
 
@@ -102,6 +94,7 @@ class ResultFragment : Fragment() {
             onSuccess = { response ->
                 //loadingProgressBar.visibility = View.VISIBLE
 
+
                 Log.d(TAG, "Data sent to server: $message")
                // val responsetest = "Michem404"
                 if (response == "Michem404") {
@@ -117,6 +110,7 @@ class ResultFragment : Fragment() {
                         val dialog: AlertDialog = builder.create()
                         dialog.show()
                     }
+
                 }
                 else {
                     this.response = response
@@ -213,3 +207,4 @@ class ResultFragment : Fragment() {
         imgLoadPrecButton.visibility = if (currentIndex > 0) View.VISIBLE else View.GONE
     }
 }
+
