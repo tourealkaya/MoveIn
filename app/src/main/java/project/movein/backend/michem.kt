@@ -1,16 +1,13 @@
 package project.movein.backend
 
-import android.os.Build
-import android.util.Log
-import android.util.LogPrinter
-import androidx.annotation.RequiresApi
 import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
 import java.io.InputStream
 import java.io.InputStreamReader
 
+data class Person(val name: String, val address: String)
 class michem {
+    private val peopleList = ArrayList<Array<String>>()
+
 
 
     fun getData(inputStream: InputStream): Map<String, Any> {
@@ -19,7 +16,12 @@ class michem {
         val chemins = mutableListOf<List<String>>()
 
         val reader = BufferedReader(InputStreamReader(inputStream))
-
+        while (true) {
+            val line = reader.readLine()?.trim() ?: break
+            if (line == "------------------") {
+                break
+            }
+        }
         while (true) {
             val line = reader.readLine()?.trim() ?: break
             if (line == "------------------") {
@@ -54,7 +56,22 @@ class michem {
 
 
 
-    fun dijkstra(graph: Map<String, Map<String, Int>>, start: String, end: String): List<String>? {
+    fun dijkstra(graph: Map<String, Map<String, Int>>, s: String, end: String): List<String>? {
+        // Ajouter des personnes à la liste
+        peopleList.add(arrayOf("Laurent Heutte", "U2.1.14"))
+        peopleList.add(arrayOf("Youssouf SAIDALI", "U2.1.38"))
+        peopleList.add(arrayOf("Mathieu BLOSSIER", "U2.1.39"))
+        var start = s
+        // Afficher les personnes de la liste
+        for (personData in peopleList) {
+            val name = personData[0]
+            val address = personData[1]
+            if(start.equals(name)){
+                start = address
+            }
+        }
+
+
         val distances = HashMap<String, Int>()
         val visited = HashSet<String>()
         val previous = HashMap<String, String>()
@@ -109,27 +126,28 @@ class michem {
         return path
     }
 
-    fun deriv(tab: MutableList<String>): MutableList<String> {
-        val rem = mutableListOf<MutableList<String>>()
-        for (i in tab.indices) {
-            try {
-                if (tab[i].length == 1) {
-                    val temp = mutableListOf<String>()
-                    for (j in tab.subList(i + 1, tab.size)) {
-                        if (j.length == 1) {
-                            rem.add(temp)
-                            tab.removeAll(temp)
-                            break
-                        }
-                        temp.add(j)
-                    }
+    fun deriv(tab: MutableList<String>): List<String> {
+        var count = 0
+        val rem = mutableListOf<String>()
+        var i = 0
+        while (i < tab.size) {
+            count++
+
+            if (tab[i].length <= 2 || i == tab.size - 1) {
+                var z = 1
+                while (z < count - 1) {
+                    rem.add(tab[i - z])
+                    println(tab[i - z])
+                    z++
                 }
-            } catch (e: Exception) {
-                break
+                count = 1
             }
+            i++
         }
+        tab.removeAll(rem)
         return tab
     }
+
 
     fun getGraph(edges: List<List<String>>): Map<String, Map<String, Int>> {
         val graph = HashMap<String, HashMap<String, Int>>()
@@ -159,7 +177,7 @@ class michem {
         mergedMap.putAll(noeuds)
         var finalString = ""
         for (i in tab) {
-            finalString += "$i,${mergedMap[i]?.get(0)},${mergedMap[i]?.get(1)}|"
+            finalString += "$i,${mergedMap[i]?.get(0)?.toInt()},${mergedMap[i]?.get(1)?.toInt()}|"
         }
         return finalString
     }

@@ -157,7 +157,7 @@ class FormFragment : Fragment() {
             }
 
             if (isValidPosition && isValidDestination) {
-                val message = (",$position,$dest")
+                val message = ("$position,$dest")
                 val action = FormFragmentDirections.actionFormFragmentToResultFragment(message)
                 findNavController().navigate(action)
             } else {
