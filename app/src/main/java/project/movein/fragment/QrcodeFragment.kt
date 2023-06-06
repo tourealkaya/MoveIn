@@ -54,9 +54,7 @@ class QrcodeFragment : Fragment() {
             bindCameraPreview()
             bindInputAnalyser()
 
-        }
 
-    }
     private fun bindCameraPreview() {
         cameraPreview = Preview.Builder()
             .setTargetRotation(binding.previewView.display.rotation)
@@ -103,7 +101,18 @@ class QrcodeFragment : Fragment() {
             InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
 
         barcodeScanner.process(inputImage)
-            .addOnSuccessListener { barcodes ->
+            .addOnSuccessListener {
+                    barcodes ->
+                        if (barcodes.isNotEmpty()) {
+                            when(barcodes.first().valueType){
+                                Barcode.TYPE_TEXT -> {
+                                    val args: QrcodeFragmentArgs by navArgs()
+                                    val positionValue = args.position
+                                    val destinationValue: String = barcodes.first().rawValue.toString()
+                                    lifecycleScope.launchWhenResumed {
+                                        val action= QrcodeFragmentDirections
+                                            .actionQrcodeFragmentToFormFragment(destinationValue,positionValue)
+                                        findNavController().navigate(action)
                 if (barcodes.isNotEmpty()) {
                     when (barcodes.first().valueType) {
                         Barcode.TYPE_TEXT -> {
@@ -118,14 +127,18 @@ class QrcodeFragment : Fragment() {
                                 findNavController().navigate(action)
                             }
                         }
-                    }
-                }
             }
             .addOnFailureListener {
                 Log.e(TAG, it.message ?: it.toString())
 
             }.addOnCompleteListener {
                 imageProxy.close()
-            }
+                                    }       
     }
 }
+
+
+
+
+
+

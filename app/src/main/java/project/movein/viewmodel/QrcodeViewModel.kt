@@ -11,21 +11,17 @@ import javax.inject.Inject
 class QrcodeViewModel (application: Application):AndroidViewModel(application){
     private val cameraProviderLiveData: MutableLiveData<ProcessCameraProvider> = MutableLiveData()
     val processCameraProvider: LiveData<ProcessCameraProvider>
-
         get() {
             val cameraProviderFuture = ProcessCameraProvider.getInstance(getApplication())
             cameraProviderFuture.addListener(
                 {
-                    try {
-                        cameraProviderLiveData.setValue(cameraProviderFuture.get())
-                    } catch (e: ExecutionException) {
-                        e.printStackTrace()
-                    } catch (e: InterruptedException) {
-                        e.printStackTrace()
-                    }
+                    cameraProviderLiveData.setValue(cameraProviderFuture.get())
                 },
                 ContextCompat.getMainExecutor(getApplication())
             )
             return cameraProviderLiveData
         }
 }
+
+
+

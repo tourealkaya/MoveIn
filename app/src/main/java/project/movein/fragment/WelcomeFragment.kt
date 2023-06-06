@@ -21,7 +21,7 @@ private lateinit var binding: FragmentWelcomeBinding
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding= project.movein.databinding.FragmentWelcomeBinding.inflate(layoutInflater)
+        binding= FragmentWelcomeBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -32,15 +32,4 @@ private lateinit var binding: FragmentWelcomeBinding
         }
 
     }
-    fun onHelpClick(view: View) {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-        builder.setMessage("Aide")
-            .setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
-            })
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-    }
-
-
-
 }
